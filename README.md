@@ -16,3 +16,10 @@ make -j$(nproc)
 ```bash
 ./main code.sy -o asm.s
 ```
+
+2. Report
+
+```
+intro.pdf
+credits.pdf
+```
