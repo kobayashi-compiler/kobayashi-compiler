@@ -1,6 +1,5 @@
 main
 *.txt
-*.md
 *.cpp0
 build/
 .vscode
