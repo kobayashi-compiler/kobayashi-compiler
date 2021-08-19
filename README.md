@@ -1,6 +1,6 @@
 # Kobayashi Compiler
 
-Usage:
+## Usage
 
 0. Build
 
@@ -17,9 +17,10 @@ make -j$(nproc)
 ./main code.sy -o asm.s
 ```
 
-2. Report
+## Slides
 
 ```
-intro.pdf
-credits.pdf
+slides/intro.pdf
+slides/pre.pdf
 ```
+
