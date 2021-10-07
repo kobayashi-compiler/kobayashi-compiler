@@ -9,8 +9,8 @@
 #include <set>
 #include <utility>
 
-#include "inst.hpp"
-#include "ir.hpp"
+#include "backend/armv7/inst.hpp"
+#include "optimizer/ir.hpp"
 
 namespace ARMv7 {
 

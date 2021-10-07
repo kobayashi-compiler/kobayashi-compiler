@@ -1,9 +1,9 @@
 
 // Generated from SysY.g4 by ANTLR 4.8
 
-#include "SysYParser.h"
+#include "frontend/SysYParser.h"
 
-#include "SysYVisitor.h"
+#include "frontend/SysYVisitor.h"
 
 using namespace antlrcpp;
 using namespace antlr4;

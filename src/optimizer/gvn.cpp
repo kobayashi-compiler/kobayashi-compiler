@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 namespace GVN {
 

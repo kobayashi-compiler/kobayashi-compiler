@@ -1,11 +1,11 @@
-#include "common.hpp"
+#include "common/common.hpp"
 
 #include <cassert>
 #include <cctype>
 #include <climits>
 #include <sstream>
 
-#include "errors.hpp"
+#include "common/errors.hpp"
 
 using std::pair;
 using std::string;

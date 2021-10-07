@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "archinfo.hpp"
-#include "common.hpp"
-#include "ir.hpp"
+#include "backend/armv7/archinfo.hpp"
+#include "common/common.hpp"
+#include "optimizer/ir.hpp"
 
 namespace ARMv7 {
 

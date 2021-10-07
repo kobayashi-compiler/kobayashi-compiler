@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 std::vector<BB *> get_BB_out(BB *w) {
   Instr *i = w->back();

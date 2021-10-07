@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 void ind_var_discovery(NormalFunc *f) {
   // TODO: debug

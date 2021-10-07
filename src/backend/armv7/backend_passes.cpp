@@ -1,4 +1,4 @@
-#include "backend_passes.hpp"
+#include "backend/armv7/backend_passes.hpp"
 
 #include <functional>
 #include <iterator>
@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-#include "merge_inst.hpp"
+#include "backend/armv7/merge_inst.hpp"
 
 using std::make_unique;
 using std::map;

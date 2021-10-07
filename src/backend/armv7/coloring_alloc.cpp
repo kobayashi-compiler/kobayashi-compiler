@@ -1,9 +1,9 @@
-#include "coloring_alloc.hpp"
+#include "backend/armv7/coloring_alloc.hpp"
 
 #include <memory>
 #include <queue>
 
-#include "program.hpp"
+#include "backend/armv7/program.hpp"
 
 using std::make_unique;
 using std::map;

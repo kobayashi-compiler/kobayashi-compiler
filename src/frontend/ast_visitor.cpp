@@ -1,12 +1,12 @@
-#include "ast_visitor.hpp"
+#include "frontend/ast_visitor.hpp"
 
 #include <variant>
 
-#include "common.hpp"
-#include "errors.hpp"
-#include "exp_value.hpp"
-#include "init_value.hpp"
-#include "symbol_table.hpp"
+#include "common/common.hpp"
+#include "common/errors.hpp"
+#include "frontend/exp_value.hpp"
+#include "frontend/init_value.hpp"
+#include "frontend/symbol_table.hpp"
 
 using std::optional;
 using std::pair;

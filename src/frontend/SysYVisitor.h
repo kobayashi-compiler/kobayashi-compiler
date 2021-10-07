@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "SysYParser.h"
+#include "frontend/SysYParser.h"
 #include "antlr4-runtime.h"
 
 /**

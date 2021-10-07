@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 void global_int_to_local(CompileUnit &c) {
   std::unordered_map<MemObject *, MemObject *> S;

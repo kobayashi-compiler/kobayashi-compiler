@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "SysYVisitor.h"
+#include "frontend/SysYVisitor.h"
 #include "antlr4-runtime.h"
 
 /**

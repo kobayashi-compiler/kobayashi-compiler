@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 void ssa_construction(NormalFunc *f, std::function<bool(Reg)> check) {
   dbg << "## ssa construction: " << f->name << "\n";

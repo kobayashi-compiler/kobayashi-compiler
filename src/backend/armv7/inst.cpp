@@ -1,7 +1,7 @@
-#include "inst.hpp"
+#include "backend/armv7/inst.hpp"
 
-#include "common.hpp"
-#include "program.hpp"
+#include "common/common.hpp"
+#include "backend/armv7/program.hpp"
 
 using std::list;
 using std::make_unique;

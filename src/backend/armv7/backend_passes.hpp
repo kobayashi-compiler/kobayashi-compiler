@@ -1,7 +1,8 @@
 #pragma once
-#include "program.hpp"
 
 namespace ARMv7 {
+struct Func;
+struct Program;
 void more_constant_info(Func *func);
 void inline_constant(Func *func);
 void spill_constant_to_first_use(Func *func);

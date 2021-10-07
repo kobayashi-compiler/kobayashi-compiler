@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 void print_cfg(DomTree &S, NormalFunc *f) {
   dbg << "CFG:\n";

@@ -1,4 +1,4 @@
-#include "ir.hpp"
+#include "optimizer/ir.hpp"
 
 namespace IR {
 

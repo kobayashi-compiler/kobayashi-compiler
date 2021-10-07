@@ -2,9 +2,9 @@
 
 #include <climits>
 
-#include "common.hpp"
-#include "errors.hpp"
-#include "symbol_table.hpp"
+#include "common/common.hpp"
+#include "common/errors.hpp"
+#include "frontend/symbol_table.hpp"
 
 #define check_and_return(x)                                            \
   if ((x) < INT32_MIN || (x) > INT32_MAX)                              \

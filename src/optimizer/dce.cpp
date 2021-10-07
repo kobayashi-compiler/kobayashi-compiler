@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 void del_edge(BB *src, BB *dst) {
   dst->for_each([&](Instr *i) {

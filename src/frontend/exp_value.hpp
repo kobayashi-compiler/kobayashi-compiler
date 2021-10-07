@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ir.hpp"
-#include "symbol_table.hpp"
+#include "optimizer/ir.hpp"
+#include "frontend/symbol_table.hpp"
 
 // when visiting int expression, return IRValue
 // when visiting bool expression, return CondJumpList

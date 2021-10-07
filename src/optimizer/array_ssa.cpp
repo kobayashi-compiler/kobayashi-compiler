@@ -1,5 +1,5 @@
-#include "common.hpp"
-#include "pass.hpp"
+#include "common/common.hpp"
+#include "optimizer/pass.hpp"
 
 void into_array_ssa(CompileUnit &c) {
   dbg << "#### ssa => array ssa\n";

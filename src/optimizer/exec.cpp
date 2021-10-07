@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 int exec(CompileUnit &c) {
   // std::cerr<<">>> exec"<<std::endl;

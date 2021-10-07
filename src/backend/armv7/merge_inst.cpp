@@ -1,4 +1,4 @@
-#include "merge_inst.hpp"
+#include "backend/armv7/merge_inst.hpp"
 
 #include <cassert>
 #include <vector>

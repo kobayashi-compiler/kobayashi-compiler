@@ -1,4 +1,4 @@
-#include "simple_coloring_alloc.hpp"
+#include "backend/armv7/simple_coloring_alloc.hpp"
 
 #include <cassert>
 #include <memory>
@@ -7,10 +7,10 @@
 #include <utility>
 #include <vector>
 
-#include "archinfo.hpp"
-#include "common.hpp"
-#include "inst.hpp"
-#include "program.hpp"
+#include "backend/armv7/archinfo.hpp"
+#include "common/common.hpp"
+#include "backend/armv7/inst.hpp"
+#include "backend/armv7/program.hpp"
 
 using std::make_unique;
 using std::pair;

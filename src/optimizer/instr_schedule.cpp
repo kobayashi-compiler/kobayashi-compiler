@@ -1,4 +1,4 @@
-#include "pass.hpp"
+#include "optimizer/pass.hpp"
 
 namespace InstrSchedule {
 void instruction_scheduling(NormalFunc *f) {

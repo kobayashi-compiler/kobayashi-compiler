@@ -1,4 +1,4 @@
-#include "program.hpp"
+#include "backend/armv7/program.hpp"
 
 #include <bitset>
 #include <functional>
@@ -11,13 +11,13 @@
 #include <utility>
 #include <vector>
 
-#include "archinfo.hpp"
-#include "backend_passes.hpp"
-#include "coloring_alloc.hpp"
-#include "common.hpp"
-#include "inst.hpp"
-#include "pass.hpp"
-#include "simple_coloring_alloc.hpp"
+#include "backend/armv7/archinfo.hpp"
+#include "backend/armv7/backend_passes.hpp"
+#include "backend/armv7/coloring_alloc.hpp"
+#include "common/common.hpp"
+#include "backend/armv7/inst.hpp"
+#include "optimizer/pass.hpp"
+#include "backend/armv7/simple_coloring_alloc.hpp"
 
 using std::bitset;
 using std::deque;

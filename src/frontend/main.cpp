@@ -3,15 +3,15 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "SysYLexer.h"
-#include "SysYParser.h"
-#include "ast_visitor.hpp"
-#include "backend_passes.hpp"
-#include "common.hpp"
-#include "errors.hpp"
-#include "ir.hpp"
-#include "pass.hpp"
-#include "program.hpp"
+#include "frontend/SysYLexer.h"
+#include "frontend/SysYParser.h"
+#include "frontend/ast_visitor.hpp"
+#include "common/common.hpp"
+#include "common/errors.hpp"
+#include "optimizer/ir.hpp"
+#include "optimizer/pass.hpp"
+#include "backend/armv7/backend_passes.hpp"
+#include "backend/armv7/program.hpp"
 
 using namespace antlr4;
 using namespace std;
