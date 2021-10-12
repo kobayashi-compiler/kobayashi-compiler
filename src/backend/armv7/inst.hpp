@@ -113,8 +113,8 @@ struct Inst {
     return dynamic_cast<T *>(this);
   }
   void update_live(std::set<Reg> &live) {
-    for (Reg i : def_reg()) live.erase(i);
-    for (Reg i : use_reg()) live.insert(i);
+    for (Reg i : def_reg()) if (i.is_pseudo() || allocable(i.id)) live.erase(i);
+    for (Reg i : use_reg()) if (i.is_pseudo() || allocable(i.id)) live.insert(i);
   }
   bool def(Reg reg) {
     for (Reg r : def_reg())
