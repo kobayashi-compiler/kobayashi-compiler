@@ -610,9 +610,8 @@ struct Branch : Inst {
 struct FuncCall : Inst {
   std::string name;
   int arg_cnt;
-  bool return_value;
-  FuncCall(std::string _name, int _arg_cnt, bool _return_value)
-      : name(_name), arg_cnt(_arg_cnt), return_value(_return_value) {}
+  FuncCall(std::string _name, int _arg_cnt)
+      : name(_name), arg_cnt(_arg_cnt) {}
 
   virtual std::vector<Reg> use_reg() override {
     if (cond != Always) return def_reg();

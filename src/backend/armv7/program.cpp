@@ -169,8 +169,7 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info,
                                          info->from_ir_reg(call->args[i])));
         }
       push_back(make_unique<FuncCall>(call->f->name,
-                                      static_cast<int>(call->args.size()),
-                                      !call->ignore_return_value));
+                                      static_cast<int>(call->args.size())));
       if (static_cast<int>(call->args.size()) > ARGUMENT_REGISTER_COUNT)
         push_back(sp_move(
             (static_cast<int>(call->args.size()) - ARGUMENT_REGISTER_COUNT) *
