@@ -355,14 +355,16 @@ void Func::calc_live() {
     block->live_use.clear();
     block->def.clear();
     for (auto it = block->insts.rbegin(); it != block->insts.rend(); ++it) {
-      for (Reg r : (*it)->def_reg()) {
-        block->live_use.erase(r);
-        block->def.insert(r);
-      }
-      for (Reg r : (*it)->use_reg()) {
-        block->def.erase(r);
-        block->live_use.insert(r);
-      }
+      for (Reg r : (*it)->def_reg()) 
+        if (r.is_pseudo() || allocable(r.id)) {
+          block->live_use.erase(r);
+          block->def.insert(r);
+        }
+      for (Reg r : (*it)->use_reg())
+        if (r.is_pseudo() || allocable(r.id)) {
+          block->def.erase(r);
+          block->live_use.insert(r);
+        }
     }
     for (Reg r : block->live_use) update.emplace_back(block.get(), r);
     block->live_in = block->live_use;
