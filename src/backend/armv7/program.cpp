@@ -611,7 +611,7 @@ void Program::gen_global_var_asm(ostream &out) {
     for (auto &obj : global_objects)
       if (obj->init) {
         if (obj->is_int) {
-          int *init = reinterpret_cast<int *>(obj->init);
+          int32_t *init = reinterpret_cast<int32_t *>(obj->init);
           out << ".align\n";
           out << obj->name << ":\n";
           out << "    .4byte ";
