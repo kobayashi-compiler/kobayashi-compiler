@@ -62,6 +62,10 @@ int main(int argc, char *argv[]) {
       ofstream asm_out{filename.second};
       prog.gen_asm(asm_out);
     } else if (arch == "rv32") {
+      if (global_config.disabled_passes.find("loop-parallel") == global_config.disabled_passes.end()) {
+        cerr << "loop parallel is not supported by rv32 backend yet\n";
+        return EXIT_FAILURE;
+      }
       RV32::Program prog(&ir);
       ofstream asm_out{filename.second};
       prog.gen_asm(asm_out);

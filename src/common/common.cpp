@@ -94,6 +94,8 @@ string mangle_global_var_name(const string &s) {
 void unreachable() { throw RuntimeError("unreachable() called"); }
 
 Configuration::Configuration(): log_level(Configuration::WARNING), simulate_exec(false) {
+  disabled_passes.insert("loop-parallel");
+  disabled_passes.insert("loop-unroll");
 }
 
 Configuration global_config;

@@ -607,7 +607,7 @@ void array_ssa_passes(CompileUnit &c, int _check_loop) {
   }
   if (_check_loop == 1) {
     c.for_each([&](NormalFunc *f) {
-      // PassIsEnabled("loop-unroll")loop_unroll(LI[f],f);
+      PassIsEnabled("loop-unroll")loop_unroll(LI[f],f);
     });
   }
   // TODO
