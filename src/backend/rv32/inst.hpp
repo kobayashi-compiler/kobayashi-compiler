@@ -205,8 +205,17 @@ struct FuncCall : Inst {
   }
   virtual bool side_effect() override { return true; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
-    out << "call " << name << '\n';
+    out << "call ";
     // call is a pseudo instruction, let the linker decide to use jal or auipc + jalr
+    if (name == "putf")
+      out << "printf";
+    else if (name == "starttime")
+      out << "_sysy_starttime";
+    else if (name == "stoptime")
+      out << "_sysy_stoptime";
+    else
+      out << name;
+    out << '\n';
   }
 };
 struct Return : Inst {
