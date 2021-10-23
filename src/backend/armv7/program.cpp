@@ -299,7 +299,7 @@ Func::Func(Program *prog, std::string _name, IR::NormalFunc *ir_func)
       if (i + 1 < blocks.size()) next_block = blocks[i + 1].get();
       blocks[i]->construct(
           cur_ir_bb, this, &info, next_block,
-          cmp_info);  // maintain in_edge, out_edge, call_subroutine,
+          cmp_info);  // maintain in_edge, out_edge,
                       // reg_mapping, ignore phi function
     }
   struct PendingMove {

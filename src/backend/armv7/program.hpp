@@ -20,7 +20,6 @@ struct MappingInfo {
   std::map<IR::BB *, Block *> block_mapping;
   std::map<Block *, IR::BB *> rev_block_mapping;
   std::map<int, int32_t> constant_value;
-  std::map<int, std::pair<StackObject *, int32_t>> constant_addr;
   int reg_n;
 
   MappingInfo();
@@ -77,7 +76,6 @@ struct OccurPoint {
 };
 
 struct Func {
-  // construct in constructor
   std::string name;
   std::vector<std::unique_ptr<Block>> blocks;
   std::vector<std::unique_ptr<StackObject>> stack_objects,
