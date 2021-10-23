@@ -31,6 +31,7 @@ struct Configuration {
   std::map<std::string, std::string> args;
 
   Configuration();  // for default setting
+  std::string get_arg(std::string key, std::string default_value);
   int get_int_arg(std::string key, int default_value);
 };
 

@@ -93,8 +93,8 @@ string mangle_global_var_name(const string &s) {
 
 void unreachable() { throw RuntimeError("unreachable() called"); }
 
-Configuration::Configuration()
-    : log_level(Configuration::WARNING), simulate_exec(false) {}
+Configuration::Configuration(): log_level(Configuration::WARNING), simulate_exec(false) {
+}
 
 Configuration global_config;
 
@@ -103,20 +103,26 @@ int Configuration::get_int_arg(string key, int default_value) {
   return atoi(args.at(key).c_str());
 }
 
+string Configuration::get_arg(string key, string default_value) {
+  auto i = args.find(key);
+  if (i == args.end()) return default_value;
+  return i->second;
+}
+
 pair<string, string> parse_arg(int argc, char *argv[]) {
   string input, output;
   for (int i = 1; i < argc; ++i) {
     string cur{argv[i]};
     if (startswith(cur, "-")) {
       if (startswith(cur, "--no-")) {
-        global_config.disabled_passes.insert(cur.substr(5, cur.length() - 5));
+        global_config.disabled_passes.insert(cur.substr(5));
+      }
+      if (startswith(cur, "--enable-")) {
+        global_config.disabled_passes.erase(cur.substr(9));
       }
       if (startswith(cur, "--set-")) {
         string kv = cur.substr(6, cur.length() - 6);
         int pos = kv.find_first_of("=");
-        if (pos == -1) {
-          throw std::invalid_argument("missing parameter value");
-        }
         if (pos == -1) {
           throw std::invalid_argument("missing parameter value");
         }

@@ -12,6 +12,8 @@
 #include "optimizer/pass.hpp"
 #include "backend/armv7/backend_passes.hpp"
 #include "backend/armv7/program.hpp"
+#include "backend/rv32/program.hpp"
+#include "backend/rv32/inst.hpp"
 
 using namespace antlr4;
 using namespace std;
@@ -53,10 +55,20 @@ int main(int argc, char *argv[]) {
     if (!found_main) throw MainFuncNotFound();
     dbg << "```cpp\n" << ir << "```\n";
     optimize_passes(ir);
-    ARMv7::Program prog(&ir);
-    ARMv7::optimize_before_reg_alloc(&prog);
-    ofstream asm_out{filename.second};
-    prog.gen_asm(asm_out);
+    string arch = global_config.get_arg("arch", "armv7");
+    if (arch == "armv7") {
+      ARMv7::Program prog(&ir);
+      ARMv7::optimize_before_reg_alloc(&prog);
+      ofstream asm_out{filename.second};
+      prog.gen_asm(asm_out);
+    } else if (arch == "rv32") {
+      RV32::Program prog(&ir);
+      ofstream asm_out{filename.second};
+      prog.gen_asm(asm_out);
+    } else {
+      cerr << "unrecognized architecture\n";
+      return EXIT_FAILURE;
+    }
     return 0;
   } catch (SyntaxError &e) {
     cout << "error: " << e.what() << '\n';
