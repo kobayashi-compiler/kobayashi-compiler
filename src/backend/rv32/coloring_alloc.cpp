@@ -48,12 +48,12 @@ void ColoringAllocator::build() {
           interfere_edge[temp[idx1]].insert(temp[idx0]);
         }
     for (auto i = block->insts.rbegin(); i != block->insts.rend(); ++i) {
-      if (Move *mov = (*i)->as<Move>()) {
-        if (mov->src != mov->dst) {
-          ++move_edge[mov->src.id][mov->dst.id];
-          ++move_edge[mov->dst.id][mov->src.id];
-        }
-      }
+      if (Move *mov = (*i)->as<Move>())
+        if (mov->src != mov->dst) 
+          if ((mov->src.is_pseudo() || allocable(mov->src.id)) && (mov->dst.is_pseudo() || allocable(mov->dst.id))) {
+            ++move_edge[mov->src.id][mov->dst.id];
+            ++move_edge[mov->dst.id][mov->src.id];
+          }
       new_nodes.clear();
       for (Reg r : (*i)->def_reg())
         if (r.is_pseudo() || allocable(r.id)) {
@@ -390,4 +390,4 @@ vector<int> ColoringAllocator::run(RegAllocStat *stat) {
   return ans;
 }
 
-}  // namespace ARMv7
+}  // namespace RV32

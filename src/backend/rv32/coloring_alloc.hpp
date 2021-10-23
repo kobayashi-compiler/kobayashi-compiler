@@ -42,4 +42,4 @@ class ColoringAllocator {
   std::vector<int> run(RegAllocStat *stat);
 };
 
-}  // namespace ARMv7
+}  // namespace RV32

@@ -259,4 +259,4 @@ vector<int> SimpleColoringAllocator::run(RegAllocStat *stat) {
   return ans;
 }
 
-}  // namespace ARMv7
+}  // namespace RV32
