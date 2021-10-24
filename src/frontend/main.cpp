@@ -14,6 +14,7 @@
 #include "backend/armv7/program.hpp"
 #include "backend/rv32/program.hpp"
 #include "backend/rv32/inst.hpp"
+#include "backend/rv32/backend_passes.hpp"
 
 using namespace antlr4;
 using namespace std;
@@ -67,6 +68,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
       }
       RV32::Program prog(&ir);
+      RV32::optimize_before_reg_alloc(&prog);
       ofstream asm_out{filename.second};
       prog.gen_asm(asm_out);
     } else {

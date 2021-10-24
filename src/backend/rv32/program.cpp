@@ -17,6 +17,7 @@
 #include "backend/rv32/inst.hpp"
 #include "backend/rv32/coloring_alloc.hpp"
 #include "backend/rv32/simple_coloring_alloc.hpp"
+#include "backend/rv32/backend_passes.hpp"
 
 using std::bitset;
 using std::deque;
@@ -210,7 +211,7 @@ void Block::insert_before_jump(unique_ptr<Inst> inst) {
   auto i = insts.end();
   while (i != insts.begin()) {
     auto prev_i = std::prev(i);
-    if ((*prev_i)->as<Branch>()) {
+    if ((*prev_i)->as<Branch>() || (*prev_i)->as<Jump>()) {
       i = prev_i;
     } else {
       break;
@@ -536,7 +537,7 @@ void Func::gen_asm(ostream &out) {
        << "callee-save registers used: " << stat.callee_save_used << '\n';
   replace_with_reg_alloc(reg_alloc);
   replace_complex_inst();
-  //optimize_after_reg_alloc(this);
+  optimize_after_reg_alloc(this);
   out << '\n' << name << ":\n";
   prologue(out);
   for (auto &block : blocks) block->gen_asm(out, &ctx);

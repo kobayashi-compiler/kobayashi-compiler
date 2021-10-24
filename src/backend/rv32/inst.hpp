@@ -363,6 +363,9 @@ struct VirtualDefPoint : Inst { // a def point that should be removed, which is 
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
     throw RuntimeError("VirtualDefPoint should be removed");
   }
+  virtual void print(std::ostream &out) override {
+    out << "VirtualDefPoint(" << dst << ")\n";
+  }
 };
 
 }

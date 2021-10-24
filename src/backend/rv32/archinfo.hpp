@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <ostream>
 #include <cstdint>
 
 namespace RV32 {
@@ -88,6 +89,30 @@ constexpr Compare logical_not(Compare c) {
     case Ge:
       return Lt;
   }
+}
+
+inline std::ostream& operator<<(std::ostream &os, Compare c) {
+  switch (c) {
+    case Eq:
+      os << "eq";
+      break;
+    case Ne:
+      os << "ne";
+      break;
+    case Lt:
+      os << "lt";
+      break;
+    case Le:
+      os << "le";
+      break;
+    case Gt:
+      os << "gt";
+      break;
+    case Ge:
+      os << "ge";
+      break;
+  }
+  return os;
 }
 
 }
