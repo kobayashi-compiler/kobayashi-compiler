@@ -17,6 +17,8 @@ make -j$(nproc)
 ./main code.sy -o asm.s
 ```
 
+The default target is armv7ve. For rv32im target, add `--set-arch=rv32`.
+
 ## Slides
 
 ```
