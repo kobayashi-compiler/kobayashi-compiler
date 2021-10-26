@@ -535,6 +535,7 @@ void direct_jump(Func *func) {
       if (Branch *b = inst->as<Branch>()) {
         size_t final_target = get_root(pos[b->target]);
         b->target = func->blocks[final_target].get();
+        b->target->label_used = true;
       }
   }
   vector<int> in_deg = func->get_in_deg();
