@@ -3,18 +3,18 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "backend/armv7/backend_passes.hpp"
+#include "backend/armv7/program.hpp"
+#include "backend/rv32/backend_passes.hpp"
+#include "backend/rv32/inst.hpp"
+#include "backend/rv32/program.hpp"
+#include "common/common.hpp"
+#include "common/errors.hpp"
 #include "frontend/SysYLexer.h"
 #include "frontend/SysYParser.h"
 #include "frontend/ast_visitor.hpp"
-#include "common/common.hpp"
-#include "common/errors.hpp"
 #include "optimizer/ir.hpp"
 #include "optimizer/pass.hpp"
-#include "backend/armv7/backend_passes.hpp"
-#include "backend/armv7/program.hpp"
-#include "backend/rv32/program.hpp"
-#include "backend/rv32/inst.hpp"
-#include "backend/rv32/backend_passes.hpp"
 
 using namespace antlr4;
 using namespace std;
@@ -63,7 +63,8 @@ int main(int argc, char *argv[]) {
       ofstream asm_out{filename.second};
       prog.gen_asm(asm_out);
     } else if (arch == "rv32") {
-      if (global_config.disabled_passes.find("loop-parallel") == global_config.disabled_passes.end()) {
+      if (global_config.disabled_passes.find("loop-parallel") ==
+          global_config.disabled_passes.end()) {
         cerr << "loop parallel is not supported by rv32 backend yet\n";
         return EXIT_FAILURE;
       }

@@ -11,13 +11,13 @@
 #include <utility>
 #include <vector>
 
-#include "optimizer/pass.hpp"
-#include "common/common.hpp"
 #include "backend/rv32/archinfo.hpp"
-#include "backend/rv32/inst.hpp"
-#include "backend/rv32/coloring_alloc.hpp"
-#include "backend/rv32/simple_coloring_alloc.hpp"
 #include "backend/rv32/backend_passes.hpp"
+#include "backend/rv32/coloring_alloc.hpp"
+#include "backend/rv32/inst.hpp"
+#include "backend/rv32/simple_coloring_alloc.hpp"
+#include "common/common.hpp"
+#include "optimizer/pass.hpp"
 
 using std::bitset;
 using std::deque;
@@ -46,17 +46,21 @@ Reg MappingInfo::from_ir_reg(IR::Reg ir_reg) {
 
 Block::Block(string _name) : prob(1), name(_name), label_used(false) {}
 
-void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_block, std::map<Reg, CmpInfo> &cmp_info) {
+void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info,
+                      Block *next_block, std::map<Reg, CmpInfo> &cmp_info) {
   for (auto &i : ir_bb->instrs) {
     IR::Instr *cur = i.get();
     if (auto loadaddr = dynamic_cast<IR::LoadAddr *>(cur)) {
       Reg dst = info->from_ir_reg(loadaddr->d1);
       if (loadaddr->offset->global) {
-        push_back(make_unique<LoadLabelAddr>(dst, mangle_global_var_name(loadaddr->offset->name)));
+        push_back(make_unique<LoadLabelAddr>(
+            dst, mangle_global_var_name(loadaddr->offset->name)));
         func->symbol_reg[dst] = mangle_global_var_name(loadaddr->offset->name);
       } else {
-        push_back(make_unique<LoadStackAddr>(info->obj_mapping[loadaddr->offset], dst, 0));
-        func->stack_addr_reg[dst] = std::pair<StackObject *, int32_t>{info->obj_mapping[loadaddr->offset], 0};
+        push_back(make_unique<LoadStackAddr>(
+            info->obj_mapping[loadaddr->offset], dst, 0));
+        func->stack_addr_reg[dst] = std::pair<StackObject *, int32_t>{
+            info->obj_mapping[loadaddr->offset], 0};
       }
     } else if (auto loadconst = dynamic_cast<IR::LoadConst *>(cur)) {
       if (loadconst->value == 0) {
@@ -67,7 +71,8 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
         func->constant_reg[dst] = loadconst->value;
       }
     } else if (auto loadarg = dynamic_cast<IR::LoadArg *>(cur)) {
-      push_back(make_unique<Move>(info->from_ir_reg(loadarg->d1), func->arg_reg[loadarg->id]));
+      push_back(make_unique<Move>(info->from_ir_reg(loadarg->d1),
+                                  func->arg_reg[loadarg->id]));
     } else if (auto unary = dynamic_cast<IR::UnaryOpInstr *>(cur)) {
       Reg dst = info->from_ir_reg(unary->d1),
           src = info->from_ir_reg(unary->s1);
@@ -76,7 +81,8 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
           push_back(make_unique<RegImmInst>(RegImmInst::Sltiu, dst, src, 1));
           break;
         case IR::UnaryOp::NEG:
-          push_back(make_unique<RegRegInst>(RegRegInst::Sub, dst, Reg{zero}, src));
+          push_back(
+              make_unique<RegRegInst>(RegRegInst::Sub, dst, Reg{zero}, src));
           break;
         case IR::UnaryOp::ID:
           push_back(make_unique<Move>(dst, src));
@@ -91,7 +97,8 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
           binary->op.type == IR::BinaryOp::MUL ||
           binary->op.type == IR::BinaryOp::DIV ||
           binary->op.type == IR::BinaryOp::MOD) {
-        push_back(make_unique<RegRegInst>(RegRegInst::from_ir_binary_op(binary->op.type), dst, s1, s2));
+        push_back(make_unique<RegRegInst>(
+            RegRegInst::from_ir_binary_op(binary->op.type), dst, s1, s2));
       } else {
         Compare c;
         switch (binary->op.type) {
@@ -111,7 +118,7 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
             unreachable();
         }
         push_back(make_unique<VirtualDefPoint>(dst));
-        cmp_info[dst] = CmpInfo{ .type = c, .lhs = s1, .rhs = s2 };
+        cmp_info[dst] = CmpInfo{.type = c, .lhs = s1, .rhs = s2};
       }
     } else if (auto load = dynamic_cast<IR::LoadInstr *>(cur)) {
       Reg dst = info->from_ir_reg(load->d1),
@@ -123,8 +130,7 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
       push_back(make_unique<Store>(src, addr, 0));
     } else if (auto jump = dynamic_cast<IR::JumpInstr *>(cur)) {
       Block *jump_target = info->block_mapping[jump->target];
-      if (jump_target != next_block)
-        push_back(make_unique<Jump>(jump_target));
+      if (jump_target != next_block) push_back(make_unique<Jump>(jump_target));
       out_edge.push_back(jump_target);
       jump_target->in_edge.push_back(this);
     } else if (auto branch = dynamic_cast<IR::BranchInstr *>(cur)) {
@@ -139,11 +145,14 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
         cond.rhs = Reg{zero};
       }
       if (false_target == next_block) {
-        push_back(make_unique<Branch>(true_target, cond.lhs, cond.rhs, cond.type));
+        push_back(
+            make_unique<Branch>(true_target, cond.lhs, cond.rhs, cond.type));
       } else if (true_target == next_block) {
-        push_back(make_unique<Branch>(false_target, cond.lhs, cond.rhs, logical_not(cond.type)));
+        push_back(make_unique<Branch>(false_target, cond.lhs, cond.rhs,
+                                      logical_not(cond.type)));
       } else {
-        push_back(make_unique<Branch>(true_target, cond.lhs, cond.rhs, cond.type));
+        push_back(
+            make_unique<Branch>(true_target, cond.lhs, cond.rhs, cond.type));
         push_back(make_unique<Jump>(false_target));
       }
       out_edge.push_back(false_target);
@@ -154,39 +163,47 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info, Block *next_
       if (ret->ignore_return_value) {
         push_back(make_unique<Return>(false));
       } else {
-        push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[0]}, info->from_ir_reg(ret->s1)));
+        push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[0]},
+                                    info->from_ir_reg(ret->s1)));
         push_back(make_unique<Return>(true));
       }
     } else if (auto call = dynamic_cast<IR::CallInstr *>(cur)) {
       if (call->args.size() > ARGUMENT_REGISTER_COUNT) {
-        int32_t sp_move = (static_cast<int32_t>(call->args.size()) - ARGUMENT_REGISTER_COUNT) * INT_SIZE;
+        int32_t sp_move = (static_cast<int32_t>(call->args.size()) -
+                           ARGUMENT_REGISTER_COUNT) *
+                          INT_SIZE;
         if (sp_move > IMM12_R || -sp_move < IMM12_L) {
           throw SyntaxError("too many arguments");
         }
         for (size_t i = 0; i < ARGUMENT_REGISTER_COUNT; ++i)
-          push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[i]}, info->from_ir_reg(call->args[i])));
+          push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[i]},
+                                      info->from_ir_reg(call->args[i])));
         push_back(make_unique<MoveSP>(-sp_move));
         int32_t pos = 0;
         for (size_t i = ARGUMENT_REGISTER_COUNT; i < call->args.size(); ++i) {
-          push_back(make_unique<Store>(info->from_ir_reg(call->args[i]), Reg{sp}, pos));
+          push_back(make_unique<Store>(info->from_ir_reg(call->args[i]),
+                                       Reg{sp}, pos));
           pos += INT_SIZE;
         }
-        push_back(make_unique<FuncCall>(call->f->name, static_cast<int>(call->args.size())));
+        push_back(make_unique<FuncCall>(call->f->name,
+                                        static_cast<int>(call->args.size())));
         push_back(make_unique<MoveSP>(sp_move));
       } else {
         for (size_t i = 0; i < call->args.size(); ++i)
-          push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[i]}, info->from_ir_reg(call->args[i])));
-        push_back(make_unique<FuncCall>(call->f->name, static_cast<int>(call->args.size())));
+          push_back(make_unique<Move>(Reg{ARGUMENT_REGISTERS[i]},
+                                      info->from_ir_reg(call->args[i])));
+        push_back(make_unique<FuncCall>(call->f->name,
+                                        static_cast<int>(call->args.size())));
       }
       if (!call->ignore_return_value)
-        push_back(make_unique<Move>(info->from_ir_reg(call->d1), Reg{ARGUMENT_REGISTERS[0]}));
+        push_back(make_unique<Move>(info->from_ir_reg(call->d1),
+                                    Reg{ARGUMENT_REGISTERS[0]}));
     } else if (auto local_var_def = dynamic_cast<IR::LocalVarDef *>(cur)) {
       // do nothing
     } else if (auto array_index = dynamic_cast<IR::ArrayIndex *>(cur)) {
       Reg dst = info->from_ir_reg(array_index->d1),
           s1 = info->from_ir_reg(array_index->s1),
-          s2 = info->from_ir_reg(array_index->s2),
-          size = info->new_reg(),
+          s2 = info->from_ir_reg(array_index->s2), size = info->new_reg(),
           mid = info->new_reg();
       push_back(make_unique<LoadImm>(size, array_index->size));
       push_back(make_unique<RegRegInst>(RegRegInst::Mul, mid, s2, size));
@@ -261,8 +278,7 @@ Func::Func(Program *prog, std::string _name, IR::NormalFunc *ir_func)
   for (int i = 0; i < arg_n; ++i) {
     Reg cur_arg = info.new_reg();
     if (i < ARGUMENT_REGISTER_COUNT) {
-      entry->push_back(
-          make_unique<Move>(cur_arg, Reg{ARGUMENT_REGISTERS[i]}));
+      entry->push_back(make_unique<Move>(cur_arg, Reg{ARGUMENT_REGISTERS[i]}));
     } else {
       unique_ptr<StackObject> t = make_unique<StackObject>(INT_SIZE);
       entry->push_back(make_unique<LoadStack>(t.get(), cur_arg, 0));
@@ -281,10 +297,9 @@ Func::Func(Program *prog, std::string _name, IR::NormalFunc *ir_func)
       IR::BB *cur_ir_bb = info.rev_block_mapping[blocks[i].get()];
       Block *next_block = nullptr;
       if (i + 1 < blocks.size()) next_block = blocks[i + 1].get();
-      blocks[i]->construct(
-          cur_ir_bb, this, &info, next_block,
-          cmp_info);  // maintain in_edge, out_edge,
-                      // reg_mapping, ignore phi function
+      blocks[i]->construct(cur_ir_bb, this, &info, next_block,
+                           cmp_info);  // maintain in_edge, out_edge,
+                                       // reg_mapping, ignore phi function
     }
   struct PendingMove {
     Block *block;
@@ -338,7 +353,7 @@ void Func::calc_live() {
     block->live_use.clear();
     block->def.clear();
     for (auto it = block->insts.rbegin(); it != block->insts.rend(); ++it) {
-      for (Reg r : (*it)->def_reg()) 
+      for (Reg r : (*it)->def_reg())
         if (r.is_pseudo() || allocable(r.id)) {
           block->live_use.erase(r);
           block->def.insert(r);
@@ -396,10 +411,12 @@ bool Func::check_store_stack() {
     for (auto i = block->insts.begin(); i != block->insts.end(); ++i) {
       (*i)->maintain_sp(sp_offset);
       if (auto store_stk = (*i)->as<StoreStack>()) {
-        int32_t total_offset = store_stk->base->position + store_stk->offset - sp_offset;
+        int32_t total_offset =
+            store_stk->base->position + store_stk->offset - sp_offset;
         if (!is_imm12(total_offset)) {
           Reg addr{reg_n++};
-          block->insts.insert(i, make_unique<LoadStackAddr>(store_stk->base, addr, store_stk->offset));
+          block->insts.insert(i, make_unique<LoadStackAddr>(
+                                     store_stk->base, addr, store_stk->offset));
           *i = make_unique<Store>(store_stk->src, addr, 0);
           ret = false;
         }
@@ -422,24 +439,29 @@ void Func::replace_complex_inst() {
     for (auto i = block->insts.begin(); i != block->insts.end(); ++i) {
       (*i)->maintain_sp(sp_offset);
       if (auto load_stk = (*i)->as<LoadStack>()) {
-        int32_t total_offset = load_stk->base->position + load_stk->offset - sp_offset;
+        int32_t total_offset =
+            load_stk->base->position + load_stk->offset - sp_offset;
         Reg dst = load_stk->dst;
         if (is_imm12(total_offset)) {
           *i = make_unique<Load>(dst, Reg{sp}, total_offset);
         } else {
           block->insts.insert(i, make_unique<LoadImm>(dst, total_offset));
-          block->insts.insert(i, make_unique<RegRegInst>(RegRegInst::Add, dst, Reg{sp}, dst));
+          block->insts.insert(
+              i, make_unique<RegRegInst>(RegRegInst::Add, dst, Reg{sp}, dst));
           *i = make_unique<Load>(dst, dst, 0);
         }
       } else if (auto store_stk = (*i)->as<StoreStack>()) {
-        int32_t total_offset = store_stk->base->position + store_stk->offset - sp_offset;
+        int32_t total_offset =
+            store_stk->base->position + store_stk->offset - sp_offset;
         assert(is_imm12(total_offset));
         *i = make_unique<Store>(store_stk->src, Reg{sp}, total_offset);
       } else if (auto load_stk_addr = (*i)->as<LoadStackAddr>()) {
-        int32_t total_offset = load_stk_addr->base->position + load_stk_addr->offset - sp_offset;
+        int32_t total_offset =
+            load_stk_addr->base->position + load_stk_addr->offset - sp_offset;
         Reg dst = load_stk_addr->dst;
         if (is_imm12(total_offset)) {
-          *i = make_unique<RegImmInst>(RegImmInst::Addi, dst, Reg{sp}, total_offset);
+          *i = make_unique<RegImmInst>(RegImmInst::Addi, dst, Reg{sp},
+                                       total_offset);
         } else {
           block->insts.insert(i, make_unique<LoadImm>(dst, total_offset));
           *i = make_unique<RegRegInst>(RegRegInst::Add, dst, Reg{sp}, dst);
@@ -470,8 +492,11 @@ void Func::gen_asm(ostream &out) {
         save_regs.emplace_back(i);
     prologue = [save_regs, stack_size](ostream &out) {
       if (stack_size == 0 && save_regs.size() == 0) return;
-      if (-stack_size - static_cast<int32_t>(save_regs.size() * INT_SIZE) >= IMM12_L) {
-        out << "addi sp, sp, " << -stack_size - static_cast<int32_t>(save_regs.size() * INT_SIZE) << '\n';
+      if (-stack_size - static_cast<int32_t>(save_regs.size() * INT_SIZE) >=
+          IMM12_L) {
+        out << "addi sp, sp, "
+            << -stack_size - static_cast<int32_t>(save_regs.size() * INT_SIZE)
+            << '\n';
         int32_t cur_pos = stack_size;
         for (Reg r : save_regs) {
           out << "sw " << r << ", " << cur_pos << "(sp)\n";
@@ -498,13 +523,16 @@ void Func::gen_asm(ostream &out) {
     };
     ctx.epilogue = [save_regs, stack_size](ostream &out) {
       if (stack_size == 0 && save_regs.size() == 0) return;
-      if (stack_size + static_cast<int32_t>(save_regs.size() * INT_SIZE) < IMM12_R) {
+      if (stack_size + static_cast<int32_t>(save_regs.size() * INT_SIZE) <
+          IMM12_R) {
         int32_t cur_pos = stack_size;
         for (Reg r : save_regs) {
           out << "lw " << r << ", " << cur_pos << "(sp)\n";
           cur_pos += 4;
         }
-        out << "addi sp, sp, " << stack_size + static_cast<int32_t>(save_regs.size() * INT_SIZE) << '\n';
+        out << "addi sp, sp, "
+            << stack_size + static_cast<int32_t>(save_regs.size() * INT_SIZE)
+            << '\n';
       } else {
         if (stack_size > 0) {
           if (stack_size < IMM12_R) {
@@ -548,7 +576,7 @@ void Func::print(ostream &out) {
   for (auto &block : blocks) block->print(out);
 }
 
-Program::Program(IR::CompileUnit *ir): block_n(0) {
+Program::Program(IR::CompileUnit *ir) : block_n(0) {
   for (auto &i : ir->funcs)
     funcs.push_back(make_unique<Func>(this, i.first, i.second.get()));
   for (size_t i = 0; i < ir->scope.objects.size(); ++i) {
@@ -597,14 +625,12 @@ void Program::gen_global_var_asm(ostream &out) {
     out << ".bss\n";
     for (auto &obj : global_objects)
       if (!obj->init) {
-        if (obj->is_int)
-          out << ".align 2\n";
+        if (obj->is_int) out << ".align 2\n";
         out << obj->name << ":\n";
         out << "    .space " << obj->size << '\n';
       }
   }
 }
-
 
 void Program::gen_asm(ostream &out) {
   gen_global_var_asm(out);
@@ -613,4 +639,4 @@ void Program::gen_asm(ostream &out) {
   for (auto &func : funcs) func->gen_asm(out);
 }
 
-}
+}  // namespace RV32

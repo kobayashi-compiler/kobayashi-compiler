@@ -8,9 +8,9 @@
 #include <vector>
 
 #include "backend/rv32/archinfo.hpp"
-#include "common/common.hpp"
 #include "backend/rv32/inst.hpp"
 #include "backend/rv32/program.hpp"
+#include "common/common.hpp"
 
 using std::make_unique;
 using std::pair;
@@ -56,7 +56,8 @@ void SimpleColoringAllocator::spill(const vector<int> &spill_nodes) {
             Reg tmp{func->reg_n++};
             func->spilling_reg.insert(tmp);
             func->constant_reg[tmp] = func->constant_reg[Reg{id}];
-            block->insts.insert(i, make_unique<LoadImm>(tmp, func->constant_reg[Reg{id}]));
+            block->insts.insert(
+                i, make_unique<LoadImm>(tmp, func->constant_reg[Reg{id}]));
             (*i)->replace_reg(Reg{id}, tmp);
           }
         } else if (func->symbol_reg.find(Reg{id}) != func->symbol_reg.end()) {
@@ -65,7 +66,8 @@ void SimpleColoringAllocator::spill(const vector<int> &spill_nodes) {
             Reg tmp{func->reg_n++};
             func->spilling_reg.insert(tmp);
             func->symbol_reg[tmp] = func->symbol_reg[Reg{id}];
-            block->insts.insert(i, make_unique<LoadLabelAddr>(tmp, func->symbol_reg[Reg{id}]));
+            block->insts.insert(
+                i, make_unique<LoadLabelAddr>(tmp, func->symbol_reg[Reg{id}]));
             (*i)->replace_reg(Reg{id}, tmp);
           }
         } else {

@@ -3,8 +3,8 @@
 #include <memory>
 #include <queue>
 
-#include "backend/rv32/program.hpp"
 #include "backend/rv32/inst.hpp"
+#include "backend/rv32/program.hpp"
 #include "common/common.hpp"
 
 using std::make_unique;
@@ -49,8 +49,9 @@ void ColoringAllocator::build() {
         }
     for (auto i = block->insts.rbegin(); i != block->insts.rend(); ++i) {
       if (Move *mov = (*i)->as<Move>())
-        if (mov->src != mov->dst) 
-          if ((mov->src.is_pseudo() || allocable(mov->src.id)) && (mov->dst.is_pseudo() || allocable(mov->dst.id))) {
+        if (mov->src != mov->dst)
+          if ((mov->src.is_pseudo() || allocable(mov->src.id)) &&
+              (mov->dst.is_pseudo() || allocable(mov->dst.id))) {
             ++move_edge[mov->src.id][mov->dst.id];
             ++move_edge[mov->dst.id][mov->src.id];
           }
@@ -249,7 +250,8 @@ void ColoringAllocator::add_spill_code(const vector<int> &spill_nodes) {
             Reg tmp{func->reg_n++};
             func->spilling_reg.insert(tmp);
             func->constant_reg[tmp] = func->constant_reg[Reg{id}];
-            block->insts.insert(i, make_unique<LoadImm>(tmp, func->constant_reg[Reg{id}]));
+            block->insts.insert(
+                i, make_unique<LoadImm>(tmp, func->constant_reg[Reg{id}]));
             (*i)->replace_reg(Reg{id}, tmp);
           }
         } else if (func->symbol_reg.find(Reg{id}) != func->symbol_reg.end()) {
@@ -258,7 +260,8 @@ void ColoringAllocator::add_spill_code(const vector<int> &spill_nodes) {
             Reg tmp{func->reg_n++};
             func->spilling_reg.insert(tmp);
             func->symbol_reg[tmp] = func->symbol_reg[Reg{id}];
-            block->insts.insert(i, make_unique<LoadLabelAddr>(tmp, func->symbol_reg[Reg{id}]));
+            block->insts.insert(
+                i, make_unique<LoadLabelAddr>(tmp, func->symbol_reg[Reg{id}]));
             (*i)->replace_reg(Reg{id}, tmp);
           }
         } else {

@@ -113,8 +113,10 @@ struct Inst {
     return dynamic_cast<T *>(this);
   }
   void update_live(std::set<Reg> &live) {
-    for (Reg i : def_reg()) if (i.is_pseudo() || allocable(i.id)) live.erase(i);
-    for (Reg i : use_reg()) if (i.is_pseudo() || allocable(i.id)) live.insert(i);
+    for (Reg i : def_reg())
+      if (i.is_pseudo() || allocable(i.id)) live.erase(i);
+    for (Reg i : use_reg())
+      if (i.is_pseudo() || allocable(i.id)) live.insert(i);
   }
   bool def(Reg reg) {
     for (Reg r : def_reg())
@@ -610,8 +612,7 @@ struct Branch : Inst {
 struct FuncCall : Inst {
   std::string name;
   int arg_cnt;
-  FuncCall(std::string _name, int _arg_cnt)
-      : name(_name), arg_cnt(_arg_cnt) {}
+  FuncCall(std::string _name, int _arg_cnt) : name(_name), arg_cnt(_arg_cnt) {}
 
   virtual std::vector<Reg> use_reg() override {
     if (cond != Always) return def_reg();

@@ -8,8 +8,8 @@
 
 #include "frontend/SysYBaseVisitor.h"
 #include "frontend/exp_value.hpp"
-#include "optimizer/ir.hpp"
 #include "frontend/symbol_table.hpp"
+#include "optimizer/ir.hpp"
 
 class ASTVisitor : public SysYBaseVisitor {
   enum ValueMode { normal, compile_time, condition } mode;

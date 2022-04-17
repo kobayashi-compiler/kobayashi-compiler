@@ -1,7 +1,8 @@
 #pragma once
 
-#include <map>
 #include <functional>
+#include <map>
+
 #include "backend/rv32/archinfo.hpp"
 #include "backend/rv32/def.hpp"
 #include "optimizer/ir.hpp"
@@ -87,12 +88,13 @@ struct Func {
                              // LoadImm + Add + Store
                              // and return false, else return true
   void replace_with_reg_alloc(const std::vector<int> &reg_alloc);
-  void replace_complex_inst();  // replace LoadStack, StoreStack and LoadStackAddr
+  void
+  replace_complex_inst();  // replace LoadStack, StoreStack and LoadStackAddr
 };
 
 struct GlobalObject {
   std::string name;
-  int size;    // only available when is_int
+  int size;  // only available when is_int
   void *init;
   bool is_int, is_const;
 };
@@ -107,4 +109,4 @@ struct Program {
   void gen_asm(std::ostream &out);
 };
 
-}
+}  // namespace RV32

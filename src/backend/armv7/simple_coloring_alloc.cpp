@@ -8,9 +8,9 @@
 #include <vector>
 
 #include "backend/armv7/archinfo.hpp"
-#include "common/common.hpp"
 #include "backend/armv7/inst.hpp"
 #include "backend/armv7/program.hpp"
+#include "common/common.hpp"
 
 using std::make_unique;
 using std::pair;

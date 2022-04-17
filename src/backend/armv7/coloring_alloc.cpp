@@ -47,8 +47,9 @@ void ColoringAllocator::build() {
         }
     for (auto i = block->insts.rbegin(); i != block->insts.rend(); ++i) {
       if (MoveReg *mov = (*i)->as<MoveReg>())
-        if (mov->src != mov->dst) 
-          if ((mov->src.is_pseudo() || allocable(mov->src.id)) && (mov->dst.is_pseudo() || allocable(mov->dst.id))) {
+        if (mov->src != mov->dst)
+          if ((mov->src.is_pseudo() || allocable(mov->src.id)) &&
+              (mov->dst.is_pseudo() || allocable(mov->dst.id))) {
             ++move_edge[mov->src.id][mov->dst.id];
             ++move_edge[mov->dst.id][mov->src.id];
           }

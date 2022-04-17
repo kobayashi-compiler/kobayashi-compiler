@@ -1,28 +1,27 @@
 #pragma once
 
 #include <array>
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
 namespace RV32 {
 
 constexpr int RegCount = 32;
-constexpr int zero = 0,
-              ra = 1,
-              sp = 2,
-              gp = 3,
-              tp = 4,
-              fp = 8;
+constexpr int zero = 0, ra = 1, sp = 2, gp = 3, tp = 4, fp = 8;
 
 enum RegisterUsage { caller_save, callee_save, special };
 
 constexpr RegisterUsage REGISTER_USAGE[RegCount] = {
-    special, callee_save, special, special, special, //zero, ra, sp, gp, tp
-    caller_save, caller_save, caller_save, // t0-t2
-    callee_save, callee_save, // s0-s1
-    caller_save, caller_save, caller_save, caller_save, caller_save, caller_save, caller_save, caller_save, // a0-a7
-    callee_save, callee_save, callee_save, callee_save, callee_save, callee_save, callee_save, callee_save, callee_save, callee_save, // s2-s11
-    caller_save, caller_save, caller_save, caller_save // t3-t6
+    special,     callee_save, special,     special,
+    special,                                // zero, ra, sp, gp, tp
+    caller_save, caller_save, caller_save,  // t0-t2
+    callee_save, callee_save,               // s0-s1
+    caller_save, caller_save, caller_save, caller_save,
+    caller_save, caller_save, caller_save, caller_save,  // a0-a7
+    callee_save, callee_save, callee_save, callee_save,
+    callee_save, callee_save, callee_save, callee_save,
+    callee_save, callee_save,                           // s2-s11
+    caller_save, caller_save, caller_save, caller_save  // t3-t6
 };
 
 constexpr bool allocable(int reg_id) {
@@ -50,12 +49,13 @@ constexpr std::array<int, ALLOCABLE_REGISTER_COUNT> ALLOCABLE_REGISTERS =
 
 constexpr int ARGUMENT_REGISTER_COUNT = 8;
 
-constexpr int ARGUMENT_REGISTERS[ARGUMENT_REGISTER_COUNT] = {10, 11, 12, 13, 14, 15, 16, 17};
+constexpr int ARGUMENT_REGISTERS[ARGUMENT_REGISTER_COUNT] = {10, 11, 12, 13,
+                                                             14, 15, 16, 17};
 
 constexpr int32_t IMM12_L = -2048, IMM12_R = 2047;
 
 constexpr bool is_imm12(int32_t value) {
-    return value >= IMM12_L && value <= IMM12_R;
+  return value >= IMM12_L && value <= IMM12_R;
 }
 
 struct Reg {
@@ -70,9 +70,7 @@ struct Reg {
   bool operator!=(const Reg &rhs) const { return id != rhs.id; }
 };
 
-enum Compare {
-  Eq, Ne, Lt, Le, Gt, Ge
-};
+enum Compare { Eq, Ne, Lt, Le, Gt, Ge };
 
 constexpr Compare logical_not(Compare c) {
   switch (c) {
@@ -91,7 +89,7 @@ constexpr Compare logical_not(Compare c) {
   }
 }
 
-inline std::ostream& operator<<(std::ostream &os, Compare c) {
+inline std::ostream &operator<<(std::ostream &os, Compare c) {
   switch (c) {
     case Eq:
       os << "eq";
@@ -115,4 +113,4 @@ inline std::ostream& operator<<(std::ostream &os, Compare c) {
   return os;
 }
 
-}
+}  // namespace RV32

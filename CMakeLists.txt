@@ -1,5 +1,5 @@
 project(thu-cs-compiler CXX)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.16)
 #aux_source_directory(. DIR_SRC)
 file(GLOB_RECURSE DIR_SRC "src/*.cpp")
 file(GLOB_RECURSE DIR_LIB_SRC "third_party/*.cpp")

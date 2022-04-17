@@ -14,10 +14,10 @@
 #include "backend/armv7/archinfo.hpp"
 #include "backend/armv7/backend_passes.hpp"
 #include "backend/armv7/coloring_alloc.hpp"
-#include "common/common.hpp"
 #include "backend/armv7/inst.hpp"
-#include "optimizer/pass.hpp"
 #include "backend/armv7/simple_coloring_alloc.hpp"
+#include "common/common.hpp"
+#include "optimizer/pass.hpp"
 
 using std::bitset;
 using std::deque;
@@ -297,10 +297,9 @@ Func::Func(Program *prog, std::string _name, IR::NormalFunc *ir_func)
       IR::BB *cur_ir_bb = info.rev_block_mapping[blocks[i].get()];
       Block *next_block = nullptr;
       if (i + 1 < blocks.size()) next_block = blocks[i + 1].get();
-      blocks[i]->construct(
-          cur_ir_bb, this, &info, next_block,
-          cmp_info);  // maintain in_edge, out_edge,
-                      // reg_mapping, ignore phi function
+      blocks[i]->construct(cur_ir_bb, this, &info, next_block,
+                           cmp_info);  // maintain in_edge, out_edge,
+                                       // reg_mapping, ignore phi function
     }
   struct PendingMove {
     Block *block;
@@ -354,7 +353,7 @@ void Func::calc_live() {
     block->live_use.clear();
     block->def.clear();
     for (auto it = block->insts.rbegin(); it != block->insts.rend(); ++it) {
-      for (Reg r : (*it)->def_reg()) 
+      for (Reg r : (*it)->def_reg())
         if (r.is_pseudo() || allocable(r.id)) {
           block->live_use.erase(r);
           block->def.insert(r);

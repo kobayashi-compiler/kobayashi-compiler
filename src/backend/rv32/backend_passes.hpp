@@ -13,4 +13,4 @@ void direct_jump(Func *func);
 void optimize_before_reg_alloc(Program *prog);
 void optimize_after_reg_alloc(Func *func);
 
-}
+}  // namespace RV32

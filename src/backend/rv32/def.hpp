@@ -4,16 +4,15 @@
 #include <map>
 #include <utility>
 
-#include "optimizer/ir.hpp"
 #include "backend/rv32/archinfo.hpp"
+#include "optimizer/ir.hpp"
 
 namespace RV32 {
 
 struct StackObject {
   int32_t size, position;
-  StackObject(int32_t _size, int32_t _pos = -1): size(_size), position(_pos) {}
+  StackObject(int32_t _size, int32_t _pos = -1) : size(_size), position(_pos) {}
 };
-
 
 struct StackObject;
 struct Block;
@@ -34,4 +33,4 @@ struct MappingInfo {
   Reg from_ir_reg(IR::Reg ir_reg);
 };
 
-}
+}  // namespace RV32

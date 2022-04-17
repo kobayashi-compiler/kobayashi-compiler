@@ -2,27 +2,34 @@
 
 #include <cassert>
 #include <iostream>
-#include <vector>
+#include <list>
+#include <map>
+#include <memory>
 #include <set>
 #include <sstream>
-#include <map>
-#include <list>
-#include <memory>
-#include "common/common.hpp"
-#include "common/errors.hpp"
+#include <vector>
+
 #include "backend/rv32/archinfo.hpp"
 #include "backend/rv32/def.hpp"
 #include "backend/rv32/program.hpp"
+#include "common/common.hpp"
+#include "common/errors.hpp"
 
 namespace RV32 {
 
 inline std::ostream &operator<<(std::ostream &os, const Reg &reg) {
-  if (reg.id == zero) os << "zero";
-  else if (reg.id == ra) os << "ra";
-  else if (reg.id == sp) os << "sp";
-  else if (reg.id == gp) os << "gp";
-  else if (reg.id == tp) os << "tp";
-  else os << 'x' << reg.id;
+  if (reg.id == zero)
+    os << "zero";
+  else if (reg.id == ra)
+    os << "ra";
+  else if (reg.id == sp)
+    os << "sp";
+  else if (reg.id == gp)
+    os << "gp";
+  else if (reg.id == tp)
+    os << "tp";
+  else
+    os << 'x' << reg.id;
   return os;
 }
 
@@ -49,8 +56,10 @@ struct Inst {
     return dynamic_cast<T *>(this);
   }
   void update_live(std::set<Reg> &live) {
-    for (Reg i : def_reg()) if (i.is_pseudo() || allocable(i.id)) live.erase(i);
-    for (Reg i : use_reg()) if (i.is_pseudo() || allocable(i.id)) live.insert(i);
+    for (Reg i : def_reg())
+      if (i.is_pseudo() || allocable(i.id)) live.erase(i);
+    for (Reg i : use_reg())
+      if (i.is_pseudo() || allocable(i.id)) live.insert(i);
   }
   bool def(Reg reg) {
     for (Reg r : def_reg())
@@ -70,30 +79,35 @@ struct Inst {
 };
 
 struct RegRegInst : Inst {
-  enum Type { Add, Sub, Mul, Div, Rem, Sll, Srl, Sra, And, Or, Xor, Slt, Sltu } op;
+  enum Type {
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Rem,
+    Sll,
+    Srl,
+    Sra,
+    And,
+    Or,
+    Xor,
+    Slt,
+    Sltu
+  } op;
   Reg dst, lhs, rhs;
-  RegRegInst(Type _op, Reg _dst, Reg _lhs, Reg _rhs): op(_op), dst(_dst), lhs(_lhs), rhs(_rhs) {}
+  RegRegInst(Type _op, Reg _dst, Reg _lhs, Reg _rhs)
+      : op(_op), dst(_dst), lhs(_lhs), rhs(_rhs) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg> use_reg() override { return {lhs, rhs}; }
   virtual std::vector<Reg *> regs() override { return {&dst, &lhs, &rhs}; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
-    static const std::map<Type, std::string> asm_name {
-      {Add, "add"},
-      {Sub, "sub"},
-      {Mul, "mul"},
-      {Div, "div"},
-      {Rem, "rem"},
-      {Sll, "sll"},
-      {Srl, "srl"},
-      {Sra, "sra"},
-      {And, "and"},
-      {Or, "or"},
-      {Xor, "xor"},
-      {Slt, "slt"},
-      {Sltu, "sltu"}
-    };
-    out << asm_name.find(op)->second << ' ' << dst << ", " << lhs << ", " << rhs << '\n';
+    static const std::map<Type, std::string> asm_name{
+        {Add, "add"}, {Sub, "sub"}, {Mul, "mul"},  {Div, "div"}, {Rem, "rem"},
+        {Sll, "sll"}, {Srl, "srl"}, {Sra, "sra"},  {And, "and"}, {Or, "or"},
+        {Xor, "xor"}, {Slt, "slt"}, {Sltu, "sltu"}};
+    out << asm_name.find(op)->second << ' ' << dst << ", " << lhs << ", " << rhs
+        << '\n';
   }
 
   static Type from_ir_binary_op(IR::BinaryOp::Type t) {
@@ -118,7 +132,8 @@ struct RegImmInst : Inst {
   enum Type { Addi, Slli, Srli, Srai, Andi, Ori, Xori, Slti, Sltiu } op;
   Reg dst, lhs;
   int32_t rhs;
-  RegImmInst(Type _op, Reg _dst, Reg _lhs, int32_t _rhs): op(_op), dst(_dst), lhs(_lhs), rhs(_rhs) {
+  RegImmInst(Type _op, Reg _dst, Reg _lhs, int32_t _rhs)
+      : op(_op), dst(_dst), lhs(_lhs), rhs(_rhs) {
     if (op == Slli || op == Srli || op == Srai) {
       assert(rhs >= 0 && rhs < 32);
     } else {
@@ -130,25 +145,19 @@ struct RegImmInst : Inst {
   virtual std::vector<Reg> use_reg() override { return {lhs}; }
   virtual std::vector<Reg *> regs() override { return {&dst, &lhs}; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
-    static const std::map<Type, std::string> asm_name {
-      {Addi, "addi"},
-      {Slli, "slli"},
-      {Srli, "srli"},
-      {Srai, "srai"},
-      {Andi, "andi"},
-      {Ori, "ori"},
-      {Xori, "xori"},
-      {Slti, "slti"},
-      {Sltiu, "sltiu"}
-    };
-    out << asm_name.find(op)->second << ' ' << dst << ", " << lhs << ", " << rhs << '\n';
+    static const std::map<Type, std::string> asm_name{
+        {Addi, "addi"}, {Slli, "slli"}, {Srli, "srli"},
+        {Srai, "srai"}, {Andi, "andi"}, {Ori, "ori"},
+        {Xori, "xori"}, {Slti, "slti"}, {Sltiu, "sltiu"}};
+    out << asm_name.find(op)->second << ' ' << dst << ", " << lhs << ", " << rhs
+        << '\n';
   }
 };
 
 struct LoadImm : Inst {
   Reg dst;
   int32_t value;
-  LoadImm(Reg _dst, int32_t _value): dst(_dst), value(_value) {}
+  LoadImm(Reg _dst, int32_t _value) : dst(_dst), value(_value) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg *> regs() override { return {&dst}; }
@@ -159,9 +168,7 @@ struct LoadImm : Inst {
 
 struct Jump : Inst {
   Block *target;
-  Jump(Block *_target): target(_target) {
-    target->label_used = true;
-  }
+  Jump(Block *_target) : target(_target) { target->label_used = true; }
 
   virtual bool side_effect() override { return true; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
@@ -173,7 +180,8 @@ struct Branch : Inst {
   Block *target;
   Reg lhs, rhs;
   Compare op;
-  Branch(Block *_target, Reg _lhs, Reg _rhs, Compare _op): target(_target), lhs(_lhs), rhs(_rhs), op(_op) {
+  Branch(Block *_target, Reg _lhs, Reg _rhs, Compare _op)
+      : target(_target), lhs(_lhs), rhs(_rhs), op(_op) {
     target->label_used = true;
   }
 
@@ -181,14 +189,16 @@ struct Branch : Inst {
   virtual std::vector<Reg *> regs() override { return {&lhs, &rhs}; }
   virtual bool side_effect() override { return true; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
-    out << 'b' << op << ' ' << lhs << ", " << rhs << ", " << target->name << '\n';
+    out << 'b' << op << ' ' << lhs << ", " << rhs << ", " << target->name
+        << '\n';
   }
 };
 
 struct FuncCall : Inst {
   std::string name;
   int arg_cnt;
-  FuncCall(std::string _name, int _arg_cnt): name(std::move(_name)), arg_cnt(_arg_cnt) {}
+  FuncCall(std::string _name, int _arg_cnt)
+      : name(std::move(_name)), arg_cnt(_arg_cnt) {}
 
   virtual std::vector<Reg> def_reg() override {
     std::vector<Reg> ret;
@@ -206,7 +216,8 @@ struct FuncCall : Inst {
   virtual bool side_effect() override { return true; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
     out << "call ";
-    // call is a pseudo instruction, let the linker decide to use jal or auipc + jalr
+    // call is a pseudo instruction, let the linker decide to use jal or auipc +
+    // jalr
     if (name == "putf")
       out << "printf";
     else if (name == "starttime")
@@ -239,7 +250,10 @@ struct Return : Inst {
 struct Load : Inst {
   Reg dst, base;
   int32_t offset;
-  Load(Reg _dst, Reg _base, int32_t _offset): dst(_dst), base(_base), offset(_offset) { assert(is_imm12(offset)); }
+  Load(Reg _dst, Reg _base, int32_t _offset)
+      : dst(_dst), base(_base), offset(_offset) {
+    assert(is_imm12(offset));
+  }
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg> use_reg() override { return {base}; }
@@ -252,7 +266,10 @@ struct Load : Inst {
 struct Store : Inst {
   Reg src, base;
   int32_t offset;
-  Store(Reg _src, Reg _base, int32_t _offset): src(_src), base(_base), offset(_offset) { assert(is_imm12(offset)); }
+  Store(Reg _src, Reg _base, int32_t _offset)
+      : src(_src), base(_base), offset(_offset) {
+    assert(is_imm12(offset));
+  }
 
   virtual std::vector<Reg> use_reg() override { return {src, base}; }
   virtual std::vector<Reg *> regs() override { return {&src, &base}; }
@@ -266,7 +283,8 @@ struct LoadStack : Inst {
   StackObject *base;
   Reg dst;
   int32_t offset;
-  LoadStack(StackObject *_base, Reg _dst, int32_t _offset): base(_base), dst(_dst), offset(_offset) {}
+  LoadStack(StackObject *_base, Reg _dst, int32_t _offset)
+      : base(_base), dst(_dst), offset(_offset) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg *> regs() override { return {&dst}; }
@@ -282,7 +300,8 @@ struct StoreStack : Inst {
   StackObject *base;
   Reg src;
   int32_t offset;
-  StoreStack(StackObject *_base, Reg _src, int32_t _offset): base(_base), src(_src), offset(_offset) {}
+  StoreStack(StackObject *_base, Reg _src, int32_t _offset)
+      : base(_base), src(_src), offset(_offset) {}
 
   virtual std::vector<Reg> use_reg() override { return {src}; }
   virtual std::vector<Reg *> regs() override { return {&src}; }
@@ -299,7 +318,8 @@ struct LoadStackAddr : Inst {
   StackObject *base;
   Reg dst;
   int32_t offset;
-  LoadStackAddr(StackObject *_base, Reg _dst, int32_t _offset): base(_base), dst(_dst), offset(_offset) {}
+  LoadStackAddr(StackObject *_base, Reg _dst, int32_t _offset)
+      : base(_base), dst(_dst), offset(_offset) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg *> regs() override { return {&dst}; }
@@ -310,10 +330,10 @@ struct LoadStackAddr : Inst {
     out << dst << " = LoadStackAddr " << offset << '(' << base << ")\n";
   }
 };
-  
+
 struct Move : Inst {
   Reg dst, src;
-  Move(Reg _dst, Reg _src): dst(_dst), src(_src) {}
+  Move(Reg _dst, Reg _src) : dst(_dst), src(_src) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg> use_reg() override { return {src}; }
@@ -323,11 +343,9 @@ struct Move : Inst {
   }
 };
 
-struct MoveSP : Inst { // for passing arguments
-  int32_t offset; // imm12
-  MoveSP(int32_t _offset): offset(_offset) {
-    assert(is_imm12(_offset));
-  }
+struct MoveSP : Inst {  // for passing arguments
+  int32_t offset;       // imm12
+  MoveSP(int32_t _offset) : offset(_offset) { assert(is_imm12(_offset)); }
 
   virtual bool side_effect() override { return true; }
   virtual void gen_asm(std::ostream &out, AsmContext *ctx) override {
@@ -337,15 +355,14 @@ struct MoveSP : Inst { // for passing arguments
   virtual void print(std::ostream &out) override {
     out << "MoveSP(" << offset << ")\n";
   }
-  virtual void maintain_sp(int32_t &sp_offset) override {
-    sp_offset += offset;
-  }
+  virtual void maintain_sp(int32_t &sp_offset) override { sp_offset += offset; }
 };
 
 struct LoadLabelAddr : Inst {
   Reg dst;
   std::string label;
-  LoadLabelAddr(Reg _dst, std::string _label): dst(_dst), label(std::move(_label)) {}
+  LoadLabelAddr(Reg _dst, std::string _label)
+      : dst(_dst), label(std::move(_label)) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg *> regs() override { return {&dst}; }
@@ -354,9 +371,10 @@ struct LoadLabelAddr : Inst {
   }
 };
 
-struct VirtualDefPoint : Inst { // a def point that should be removed, which is for comparing operation
+struct VirtualDefPoint : Inst {  // a def point that should be removed, which is
+                                 // for comparing operation
   Reg dst;
-  VirtualDefPoint(Reg _dst): dst(_dst) {}
+  VirtualDefPoint(Reg _dst) : dst(_dst) {}
 
   virtual std::vector<Reg> def_reg() override { return {dst}; }
   virtual std::vector<Reg *> regs() override { return {&dst}; }
@@ -368,4 +386,4 @@ struct VirtualDefPoint : Inst { // a def point that should be removed, which is 
   }
 };
 
-}
+}  // namespace RV32

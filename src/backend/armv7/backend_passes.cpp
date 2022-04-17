@@ -295,7 +295,8 @@ void remove_unused(Func *func) {
       bool used = (*it)->side_effect();
       if ((*it)->change_cpsr() && use_cpsr) used = true;
       for (Reg r : (*it)->def_reg())
-        if ((r.is_machine() && !allocable(r.id)) || live.find(r) != live.end()) used = true;
+        if ((r.is_machine() && !allocable(r.id)) || live.find(r) != live.end())
+          used = true;
       if (!used) {
         if (global_config.log_level <= Configuration::DEBUG) {
           debug << "remove unused: " << (*it)->to_string();
