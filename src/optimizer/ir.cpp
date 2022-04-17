@@ -117,10 +117,10 @@ void MemWrite::print(ostream &os) const {
 
 CompileUnit::CompileUnit() : scope("global", 1) {
   LibFunc *f;
-  f = new_LibFunc(".fork", 0);
+  f = new_LibFunc("__create_threads", 0);
   f->in = 1;
   f->out = 1;
-  f = new_LibFunc(".join", 1);
+  f = new_LibFunc("__join_threads", 1);
   f->in = 1;
   f->out = 1;
 

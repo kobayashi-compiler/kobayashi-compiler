@@ -200,7 +200,7 @@ int exec(CompileUnit &c) {
               fputs(buf,ofile);
               if(len)eol=(buf[len-1]==10);*/
               assert(0);
-            } else if (x->f->name == ".fork") {
+            } else if (x->f->name == "__create_threads") {
               assert(args.size() == 1);
               assert(args[0] >= 1);
               assert(!in_fork);
@@ -211,7 +211,7 @@ int exec(CompileUnit &c) {
               ++fork_cnt;
               ret = args[0] - 1;
               // std::cerr<<">>> fork"<<std::endl;
-            } else if (x->f->name == ".join") {
+            } else if (x->f->name == "__join_threads") {
               assert(args.size() == 2);
               assert(args[0] >= 0);
               assert(args[0] < args[1]);
