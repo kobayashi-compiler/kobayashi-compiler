@@ -177,7 +177,7 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info,
       if (!call->ignore_return_value)
         push_back(make_unique<MoveReg>(info->from_ir_reg(call->d1),
                                        Reg{ARGUMENT_REGISTERS[0]}));
-      if (call->f->name == ".fork") {
+      if (call->f->name == "__create_threads") {
         func->spilling_reg.insert(info->from_ir_reg(call->d1));
         debug << "thread_id: " << call->d1 << " -> "
               << info->from_ir_reg(call->d1) << " is forbidden to be spilled\n";
@@ -638,62 +638,11 @@ void Program::gen_global_var_asm(ostream &out) {
   }
 }
 
-std::string sfork = R"(
-.fork:
-	push {r4, r5, r6, r7}
-	sub r5, r0, #1
-	cmp r5, #0
-	movle r0, #0
-	ble .fork_0
-	mov r7, #120
-	mov r1, sp
-	mov r2, #0
-	mov r3, #0
-	mov r4, #0
-	mov r6, #0
-.fork_1:
-	mov r0, #273
-	swi #0
-	cmp r0, #0
-	movne r0, r6
-	bne .fork_0
-	add r6, r6, #1
-	cmp r6, r5
-	bne .fork_1
-	mov r0, r5
-.fork_0:
-	pop {r4, r5, r6, r7}
-	bx lr
-)";
-
-std::string sjoin = R"(
-.join:
-	sub sp, sp, #1024
-	sub sp, sp, r0, LSL #10
-	push {r4, lr}
-	sub r1, r1, #1
-	cmp r1, r0
-	mov r4, r0
-	beq .join_0
-	mov r0, #0
-	bl wait
-.join_0:
-	cmp r4, #0
-	bne .join_1
-	pop {r4, lr}
-	add sp, sp, #1024
-	bx lr
-.join_1:
-	mov r0, #0
-	bl _exit
-)";
-
 void Program::gen_asm(ostream &out) {
   out << ".arch armv7ve\n.arm\n";
   gen_global_var_asm(out);
   out << ".global main\n";
   out << ".section .text\n";
-  out << sfork << sjoin;
   for (auto &func : funcs) func->gen_asm(out);
 }
 

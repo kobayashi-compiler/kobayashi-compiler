@@ -428,8 +428,8 @@ void code_reorder(NormalFunc *f) {
 }
 
 void compute_thread_local(CompileUnit &c) {
-  auto fork = c.lib_funcs.at(".fork").get();
-  auto join = c.lib_funcs.at(".join").get();
+  auto fork = c.lib_funcs.at("__create_threads").get();
+  auto join = c.lib_funcs.at("__join_threads").get();
   c.for_each([&](NormalFunc *f) {
     auto S = build_dom_tree(f);
     f->for_each([&](BB *bb) {

@@ -1019,7 +1019,7 @@ void loop_parallel(const std::unordered_map<BB *, LoopInfo> &LI, CompileUnit &c,
     new_entry_par->push(new LoadConst(thread_cnt, THREAD_CNT));
     new_entry_par->push(
         new BinaryOpInstr(block_size, loop_times, thread_cnt, BinaryOp::DIV));
-    new_entry_par->push(new CallInstr(thread_id, c.lib_funcs.at(".fork").get(),
+    new_entry_par->push(new CallInstr(thread_id, c.lib_funcs.at("__create_threads").get(),
                                       {thread_cnt}, 0));
 
     std::vector<Reg> block_offset(THREAD_CNT);
@@ -1166,7 +1166,7 @@ void loop_parallel(const std::unordered_map<BB *, LoopInfo> &LI, CompileUnit &c,
       new_entry_par_2[i]->push(new JumpInstr(new_w[i]));
 
       new_exit_par[i]->push(new CallInstr(f->new_Reg(),
-                                          c.lib_funcs.at(".join").get(),
+                                          c.lib_funcs.at("__join_threads").get(),
                                           {thread_id_imm[i], thread_cnt}, 1));
       new_exit_par[i]->push(new JumpInstr(new_exit));
     }
