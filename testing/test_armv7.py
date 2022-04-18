@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# This script is used for testing on an arm machine.
+# Please change the constant values according to your environment.
 import os
 import subprocess
 import sys
@@ -21,8 +23,9 @@ scenes = ['function_test2020', 'function_test2021',
 scene = scenes[int(sys.argv[1])]
 
 testcase = os.path.join('/home/pi/compiler2021/公开用例与运行时库', scene)
-compiler = '/home/pi/kobayashi-compiler/build'
-runtime = '/home/pi/compiler2021/公开用例与运行时库/libsysy.a'
+compiler = '/home/pi/kobayashi-compiler/build/main'
+runtime = '/home/pi/kobayashi-compiler/runtime/sylib.c /home/pi/kobayashi-compiler/runtime/armv7/thread.S'
+cc = 'gcc -march=armv7ve'
 
 try:
     testcases = sorted([os.path.splitext(os.path.basename(file))[0]
@@ -49,8 +52,8 @@ for base in testcases:
 
     # compile
     os.system(
-        ' '.join([os.path.join(compiler, 'main'), sy_file, '-o', 'asm.s']))
-    os.system(f'gcc -march=armv7 asm.s {runtime} -o main')
+        ' '.join([compiler, sy_file, '-o', 'asm.s'] + sys.argv[2:]))
+    os.system(f'{cc} asm.s {runtime} -o main')
     os.system(f'touch {in_file}')
 
     # time
