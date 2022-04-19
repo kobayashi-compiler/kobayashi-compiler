@@ -18,7 +18,7 @@ make -j$(nproc)
 1. Run
 
 ```bash
-./main <source_code>.sy -o <output_asm>.s
+./compiler <source_code>.sy -o <output_asm>.s
 ```
 
 ### Additional Arguments
