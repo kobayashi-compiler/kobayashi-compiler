@@ -1,6 +1,8 @@
 # Kobayashi Compiler
 
-It's an optimizing compiler of SysY, a subset of C. SysY is the language used by the Collegiate Student System Capability Challenge (Compiler Track) 2021. Supported targets are armv7 and risc-v32. (To be accurate, armv7ve and rv32im.)
+An optimizing compiler of SysY, a subset of C.
+
+SysY is the language used by the Collegiate Student System Capability Challenge (Compiler Track) 2021. For its specification (in Chinese) and runtime, see [here](https://gitlab.eduxiji.net/nscscc/compiler2021/-/tree/master). Supported targets are armv7 and risc-v32. (To be accurate, armv7ve and rv32im.)
 
 ## Usage
 
