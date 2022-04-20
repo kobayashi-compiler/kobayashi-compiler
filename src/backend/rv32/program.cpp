@@ -198,6 +198,11 @@ void Block::construct(IR::BB *ir_bb, Func *func, MappingInfo *info,
       if (!call->ignore_return_value)
         push_back(make_unique<Move>(info->from_ir_reg(call->d1),
                                     Reg{ARGUMENT_REGISTERS[0]}));
+      if (call->f->name == "__create_threads") {
+        func->spilling_reg.insert(info->from_ir_reg(call->d1));
+        debug << "thread_id: " << call->d1 << " -> "
+              << info->from_ir_reg(call->d1) << " is forbidden to be spilled\n";
+      }
     } else if (auto local_var_def = dynamic_cast<IR::LocalVarDef *>(cur)) {
       // do nothing
     } else if (auto array_index = dynamic_cast<IR::ArrayIndex *>(cur)) {
