@@ -23,7 +23,7 @@ scenes = ['function_test2020', 'function_test2021',
 scene = scenes[int(sys.argv[1])]
 
 testcase = os.path.join('/home/pi/compiler2021/公开用例与运行时库', scene)
-compiler = '/home/pi/kobayashi-compiler/build/main'
+compiler = '/home/pi/kobayashi-compiler/build/compiler'
 runtime = '/home/pi/kobayashi-compiler/runtime/sylib.c /home/pi/kobayashi-compiler/runtime/armv7/thread.S'
 cc = 'gcc -march=armv7ve'
 
