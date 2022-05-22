@@ -2,7 +2,7 @@
 
 An optimizing compiler of SysY, a subset of C. Supported targets are armv7 and risc-v32. (To be accurate, armv7ve and rv32im.)
 
-SysY is the language used by the Collegiate Student System Capability Challenge (Compiler Track) 2021, an compiler contest in China. ([contest homepage](https://compiler.educg.net/2021CSCC))
+SysY is the language used by the Collegiate Student System Capability Challenge (Compiler Track) 2021, a compiler contest in China. ([contest homepage](https://compiler.educg.net/2021CSCC))
 
 For SysY specification (in Chinese), runtime, and testcases, see [here](https://gitlab.eduxiji.net/nscscc/compiler2021/-/tree/master).
 
