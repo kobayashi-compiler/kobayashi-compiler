@@ -6,6 +6,18 @@ SysY 是全国大学生计算机系统能力大赛编译系统设计赛2021的�
 
 [这里](https://gitlab.eduxiji.net/nscscc/compiler2021/-/tree/master)有SysY的语言规范、runtime 和比赛测例。
 
+## 统计
+
+比赛中有两部分测例：功能测例和性能测例。正确通过功能测例即得分，而性能测例的分数由编译器生成的代码的运行时间决定。在比赛中，我们通过了所有功能测例。（决赛中的大部分队也都全部通过了。）我们的性能得分和总分都排名第一。
+
+这里是比赛的性能测例上的测试结果。测试环境是一台 Raspberry Pi 4B。作为对比，也列出了 `gcc (Raspbian 8.3.0-6+rpi1) 8.3.0` 生成的代码的运行时间。
+
+gcc 参数是 `-march=armv7ve -Ofast`。
+
+不开启自动并行化的测试结果：[no parallelization](doc/no_parallelization.md)
+
+开启自动并行化的测试结果（为此编译器加上 `--enable-loop-parallel` 参数，为 gcc 加上 `-ftree-parallelize-loops=4`）：[parallelization](doc/parallelization.md)
+
 ## 用法
 
 0. Build
